@@ -1,8 +1,9 @@
 pipeline {
   agent any
   stages {
-    stage('error') {
+    stage('env check') {
       steps {
+        sh 'whoami'
         sh 'pwd'
       }
     }
