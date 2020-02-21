@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import feedparser
 import os
 import requests
+from packaging import version as pkgversion
 
 def local_version(debug, server_version):
 	# method that checks the local version of unity to the server version.
@@ -42,18 +43,34 @@ def local_version(debug, server_version):
 			f.close()
 			return(True)
 
-def check_state(debug): 
+def check_state(debug, version): 
 	feed = feedparser.parse('https://unity3d.com/unity/lts-releases.xml')
 
-	server_version = feed.entries[0]['title_detail']['value']
-	summary = feed.entries[0]['summary_detail']['value']
+	for i in range(0, len(feed.entries)):
+		rss_version = feed.entries[i]['title_detail']['value'].split(' ')[1]
 
-	if debug: print('server version:', server_version)
-	
-	local_state = local_version(debug, server_version.strip())
+		if i == 0:
+			if debug: print('setting highest version to', rss_version)
+			highest_rss_version = rss_version
+			highest_rss_summary = feed.entries[0]['summary_detail']['value']
+			pass
+
+		if version in rss_version:
+			if pkgversion.parse(rss_version) > pkgversion.parse(highest_rss_version):
+				highest_rss_version = rss_version
+				highest_rss_summary = feed.entries[0]['summary_detail']['value']
+
+	print('highest rss version', highest_rss_version)
+
+#	server_version = feed.entries[0]['title_detail']['value']
+#	summary = feed.entries[0]['summary_detail']['value']
+
+	if debug: print('server version:', highest_rss_version)
+
+	local_state = local_version(debug, highest_rss_version)
 
 	if not local_state:
-		soup = BeautifulSoup(summary, 'lxml')
+		soup = BeautifulSoup(highest_rss_summary, 'lxml')
 
 		tags = soup.find_all('a', href=True)
 
@@ -74,6 +91,7 @@ def check_state(debug):
 if __name__ == "__main__":
 	PARSER = argparse.ArgumentParser(description='Unity LTS check and download updates')
 	PARSER.add_argument('-d', '--debug', help='debugging', action='store_true', default=False)
+	PARSER.add_argument('version', help='version')
 	ARGS = PARSER.parse_args()
 
-	check_state(ARGS.debug)
+	check_state(ARGS.debug, ARGS.version)

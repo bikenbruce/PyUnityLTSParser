@@ -2,3 +2,4 @@ BeautifulSoup4
 feedparser
 requests
 lxml
+packaging
