@@ -3,3 +3,4 @@ feedparser
 requests
 lxml
 packaging
+wget

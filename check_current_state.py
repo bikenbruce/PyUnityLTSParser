@@ -4,6 +4,7 @@ import feedparser
 import os
 import requests
 from packaging import version as pkgversion
+import wget
 
 def local_version(debug, server_version):
 	# method that checks the local version of unity to the server version.
@@ -83,9 +84,10 @@ def check_state(debug, version):
 		
 				if not os.path.exists(file_name):
 					print('downloading: ', file_name)
+					wget.download(url)
 
-					r = requests.get(url)
-					open('downloads/' + file_name, 'wb').write(r.content)
+					# r = requests.get(url)
+					# open('downloads/' + file_name, 'wb').write(r.content)
 		
 
 if __name__ == "__main__":
