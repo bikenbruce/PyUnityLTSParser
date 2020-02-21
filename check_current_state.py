@@ -27,7 +27,7 @@ def local_version(debug, server_version):
 		# file and folder exists, open file, read content
 		f = open(local_version_file, 'r')
 		file_version = f.readline()
-		if debug: print('local version: ', file_version)
+		if debug: print('local version:', file_version)
 		if not file_version in server_version:
 			print('local version does not match server version')
 			f.close()
@@ -52,13 +52,13 @@ def check_state(debug, version):
 		if i == 0:
 			if debug: print('setting highest version to', rss_version)
 			highest_rss_version = rss_version
-			highest_rss_summary = feed.entries[0]['summary_detail']['value']
+			highest_rss_summary = feed.entries[i]['summary_detail']['value']
 			pass
 
 		if version in rss_version:
 			if pkgversion.parse(rss_version) > pkgversion.parse(highest_rss_version):
 				highest_rss_version = rss_version
-				highest_rss_summary = feed.entries[0]['summary_detail']['value']
+				highest_rss_summary = feed.entries[i]['summary_detail']['value']
 
 	print('highest rss version', highest_rss_version)
 
