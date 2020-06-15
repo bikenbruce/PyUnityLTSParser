@@ -83,18 +83,19 @@ def check_state(debug, version):
         for tag in tags:
             url = tag.get("href")
             if ".pkg" in url:
-                file_name = url.rsplit("/", 1)[1]
+                pkg_name = url.rsplit("/", 1)[1]
+                if not pkg_name.find(highest_rss_version) > 0:
+                    pkg_name = pkg_name.split(".")[0] + "-" + \
+                        highest_rss_version + ".pkg"
+                local_file_name = "downloads/" + pkg_name
                 if debug:
                     print("url: ", url)
-                if debug:
-                    print("file_name:", file_name)
-
-                if not os.path.exists(file_name):
-                    print("downloading: ", file_name)
-                    wget.download(url)
-
-                    # r = requests.get(url)
-                    # open('downloads/' + file_name, 'wb').write(r.content)
+                    print("pkg_name: ", pkg_name)
+                    print("local_file_name: ", local_file_name)
+                   
+                if not os.path.exists(local_file_name):
+                    print("downloading pkg: ", pkg_name)
+                    wget.download(url, local_file_name)
 
 
 if __name__ == "__main__":
